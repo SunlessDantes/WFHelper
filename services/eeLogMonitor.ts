@@ -419,9 +419,9 @@ function handleLine(line: string, source: "dbwin" | "file" = "file"): void {
     } else if (isMissionEndLine(line)) {
       activeMissionTagCallback("EndOfMission");
     }
-    if (arenaMissionEndCallback && ARENA_MISSION_END_PATTERN.test(line)) {
-      arenaMissionEndCallback();
-    }
+    //if (arenaMissionEndCallback && ARENA_MISSION_END_PATTERN.test(line)) {
+    //  arenaMissionEndCallback();
+    //} iwas testen aber lässt sich nicht pushen
   }
 
   // Start buffering on the dialog description line.
