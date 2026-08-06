@@ -82,7 +82,7 @@ const CHAT_TAB_MARKER = "ChatRedux::AddTab: Adding tab with channel name: ";
 
 //1st: need pattern to detect wether player is in Vodyanoi
 //2nd check wether a log line exists upon pressing stats in bottom right corner
-const ARENA_MISSION_END_PATTERN = null; //temp
+const ARENA_MISSION_END_PATTERN = "temp_string"; //temp
 
 export function parseWhisperUsername(line: string): string | null {
   const start = line.indexOf(CHAT_TAB_MARKER);
