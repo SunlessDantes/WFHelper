@@ -136,3 +136,9 @@ export const ARBI_SCHED_GET = "arbi-sched:get";
 export const ARBI_SCHED_SET_OCCURRENCE = "arbi-sched:set-occurrence";
 export const ARBI_SCHED_SET_FAVORITE = "arbi-sched:set-favorite";
 export const ARBI_SCHED_SET_LEAD = "arbi-sched:set-lead";
+
+export const ENDO_GET_RUNS = "endo:get-runs";
+export const ENDO_DELETE_RUN = "endo:delete-run";
+//export const ENDO_SET_TAGS = "endo-arena:set-tags";
+//export const ENDO_EXPORT_LOG = "endo-arena:export-log"
+

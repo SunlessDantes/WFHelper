@@ -23,6 +23,7 @@ import {
   shutdownArbiTracker,
   setArbiCallbacks,
 } from "./arbiRunTracker";
+import {onArenaMissionEnd} from "./endoRunTracker";
 import type { ArbiRunRecord } from "../config/shared/arbiTypes";
 import { normalizeErrorMessage } from "../config/shared/errors";
 import type { TradeType, TradeDirection } from "../config/shared/statsTypes";
@@ -74,7 +75,14 @@ const TRADE_PARTNER_PATTERN = /TradingPost\.lua.*?[Tt]rade.*?[Ww]ith[: ]+([A-Za-
 //   ChatRedux::AddTab: Adding tab with channel name: F<User> to index <N>
 // The message text is never logged - only that a conversation opened and from
 // whom. The "F" prefix marks a private/whisper tab; strip it for the username.
+// PLATZHALTER: Dies muss durch das tatsächliche Log-Muster für das Ende einer Arena-Mission ersetzt werden.
+// Eine gute Vermutung ist eine 'EOM' (End of Mission) Zeile mit einer spezifischen 'missionLocation'.
 const CHAT_TAB_MARKER = "ChatRedux::AddTab: Adding tab with channel name: ";
+
+
+//1st: need pattern to detect wether player is in Vodyanoi
+//2nd check wether a log line exists upon pressing stats in bottom right corner
+const ARENA_MISSION_END_PATTERN = null; //temp
 
 export function parseWhisperUsername(line: string): string | null {
   const start = line.indexOf(CHAT_TAB_MARKER);
@@ -158,6 +166,7 @@ let tradePartnerCallback: ((username: string) => void) | null = null;
 let tradeConfirmedCallback: ((trade: ParsedLogTrade) => void) | null = null;
 let messageCallback: ((playerName: string) => void) | null = null;
 let activeMissionTagCallback: ((tag: string) => void) | null = null;
+let arenaMissionEndCallback: (() => void) | null = null;
 
 export { RIVEN_PATTERNS, forceEndRivenSession };
 
@@ -410,6 +419,9 @@ function handleLine(line: string, source: "dbwin" | "file" = "file"): void {
     } else if (isMissionEndLine(line)) {
       activeMissionTagCallback("EndOfMission");
     }
+    if (arenaMissionEndCallback && ARENA_MISSION_END_PATTERN.test(line)) {
+      arenaMissionEndCallback();
+    }
   }
 
   // Start buffering on the dialog description line.
@@ -582,6 +594,7 @@ interface EeLogHandlers {
   onRivenChatView?: (() => void) | null;
   onRivenWeaponPath?: ((weaponPath: string) => void) | null;
   onArbiRunSaved?: ((run: ArbiRunRecord) => void) | null;
+  onArenaMissionEnd?: (() => void) | null; //????
 }
 
 type NormalizedEeLogHandlers = {
@@ -606,6 +619,7 @@ const NULL_EE_LOG_HANDLERS: NormalizedEeLogHandlers = {
   onRivenChatView: null,
   onRivenWeaponPath: null,
   onArbiRunSaved: null,
+  onArenaMissionEnd: null,
 };
 
 /** Keep a value only when it is a function, else null. */
@@ -642,6 +656,7 @@ function normalizeHandlers(
     onRivenChatView: asFunction(handlers.onRivenChatView),
     onRivenWeaponPath: asFunction(handlers.onRivenWeaponPath),
     onArbiRunSaved: asFunction(handlers.onArbiRunSaved),
+    onArenaMissionEnd: asFunction(handlers.onArenaMissionEnd),
   };
 }
 
@@ -668,6 +683,7 @@ export function startWatching(
   tradeConfirmedCallback = normalized.onTradeConfirmed;
   messageCallback = normalized.onInGameMessage;
   activeMissionTagCallback = normalized.onActiveMissionTag;
+  arenaMissionEndCallback = normalized.onArenaMissionEnd;
   setRivenCallbacks({
     onRivenSessionOpen: normalized.onRivenSessionOpen,
     onRivenSessionClose: normalized.onRivenSessionClose,
