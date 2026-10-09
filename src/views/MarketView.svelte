@@ -58,6 +58,7 @@
   import { SvelteMap, SvelteSet } from "svelte/reactivity";
 
   import { itemDb, parsedItems, wfmItems } from "../stores/data.js";
+  import { marketItemLabel } from "../lib/itemLabel.js";
   import {
     applyClosedOrderQuantity,
     busyOrderIds,
@@ -188,6 +189,7 @@
     wfmItems: WfmItemsLookup,
   ): WfmOrder & {
     name: string;
+    displayName: string;
     amount: number;
     count: number;
     internalName: string;
@@ -196,6 +198,7 @@
     return {
       ...order,
       name: order.itemName,
+      displayName: marketItemLabel(order.itemName, wfmItems, $itemDb),
       amount: order.quantity,
       count: ownedCountForMarketOrder(order, parsedItems, wfmItems),
       internalName: order.itemUrlName || "",
@@ -723,11 +726,11 @@
         tradeSize > 1
           ? $tr(bought ? "market.confirmOrderBoughtTrade" : "market.confirmOrderSoldTrade", {
               count: tradeSize,
-              item: order.itemName,
+              item: marketItemLabel(order.itemName, $wfmItems, $itemDb),
               price: order.platinum,
             })
           : $tr(bought ? "market.confirmOrderBought" : "market.confirmOrderSold", {
-              item: order.itemName,
+              item: marketItemLabel(order.itemName, $wfmItems, $itemDb),
               price: order.platinum,
             });
       if (!(await confirmWithDialog(message, $tr))) return;
