@@ -1725,6 +1725,7 @@
   "world.bounties": "Bounties",
   "world.bountiesCount": "Bounties: {count}",
   "world.bountyLabel": "Bounty",
+  "world.bountyStage": "Stage {n}",
   "world.creditsAmount": "{amount} Credits",
   "world.cycle.cold": "Cold",
   "world.cycle.day": "Day",

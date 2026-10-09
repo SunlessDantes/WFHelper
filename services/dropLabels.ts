@@ -1,7 +1,6 @@
-// Drop-table item and place names in the game language. The drop tables are
-// English only, so each name is looked up by its English text: items through the
-// item database, everything else through DE's dictionary read backwards. Places are
-// composed ("Mantle (Earth), Rotation A"), so they are split and put back together.
+// Drop-table names in the game language. The tables are English only, so items go
+// through the item database and the rest through DE's dictionary read backwards;
+// composed places ("Mantle (Earth), Rotation A") are split and put back together.
 // English stays the row's key; a label rides along only where the text moved.
 
 import type { DropRow } from "../config/shared/dropTypes";

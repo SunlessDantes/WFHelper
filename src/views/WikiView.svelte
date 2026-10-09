@@ -6,7 +6,8 @@
   import { addSavedSearch, removeSavedSearch, savedSearches } from "../stores/savedSearches.js";
   import { activeEnemy, activeItem, activeRelic, wikiSearchRequest } from "../stores/modals.js";
   import { relicDb } from "../stores/relics.js";
-  import { worldData } from "../stores/world.js";
+  import { worldData, worldLabels } from "../stores/world.js";
+  import { worldLabel } from "../lib/world/worldLabels.js";
   import { canonicalSyndicateKey } from "../lib/bountyRewards.js";
   import { buildItemNameIndex } from "../lib/componentResolution.js";
   import { loadCodexScans } from "../lib/codexScansLazy.js";
@@ -92,7 +93,10 @@
   };
 
   /** "<location>|<min>|<max>" -> the job the world state currently offers there. */
-  function buildLiveBountyIndex(bounties: SyndicateBounty[] | undefined): Map<string, string> {
+  function buildLiveBountyIndex(
+    bounties: SyndicateBounty[] | undefined,
+    labels: Record<string, string>,
+  ): Map<string, string> {
     // Rebuilt whole and reassigned, so the map itself never needs to publish.
     // eslint-disable-next-line svelte/prefer-svelte-reactivity
     const index = new Map<string, string>();
@@ -104,13 +108,16 @@
       for (const job of group.jobs || []) {
         const [min, max] = job.enemyLevels || [];
         if (!job.type || min == null || max == null) continue;
-        index.set(`${location}|${min}|${max}`, job.type);
+        index.set(
+          `${location}|${min}|${max}`,
+          worldLabel(labels, job.type, job.jobType ?? job.type),
+        );
       }
     }
     return index;
   }
 
-  $: liveBounties = buildLiveBountyIndex($worldData?.bounties);
+  $: liveBounties = buildLiveBountyIndex($worldData?.bounties, $worldLabels);
 
   function liveBountyName(row: DropRow, index: Map<string, string>): string | null {
     if (row.kind !== "bounty" || index.size === 0) return null;

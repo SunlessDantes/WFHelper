@@ -1709,6 +1709,7 @@
   "world.bounties": "赏金",
   "world.bountiesCount": "赏金：{count}",
   "world.bountyLabel": "赏金",
+  "world.bountyStage": "第 {n} 阶段",
   "world.creditsAmount": "{amount} 现金",
   "world.cycle.cold": "寒冷",
   "world.cycle.day": "白天",

@@ -1705,6 +1705,7 @@
   "world.bounties": "Aufträge",
   "world.bountiesCount": "Aufträge: {count}",
   "world.bountyLabel": "Auftrag",
+  "world.bountyStage": "Stufe {n}",
   "world.creditsAmount": "{amount} Credits",
   "world.cycleDataUnavailable": "Zyklusdaten nicht verfügbar",
   "world.dailyReset": "Täglicher Reset",
