@@ -25,6 +25,7 @@ import {
   SPAWN_NODES_GET,
   DB_GET_WFM_ITEMS,
   DB_GET_SYNDICATE_NAMES,
+  DB_GET_RIVEN_STAT_NAMES,
   DB_GET_MASTERY,
   DB_GET_CODEX_SCANS,
   PERSONAL_PROFILE_GET,
@@ -217,6 +218,7 @@ try {
     getRelicDataInfo: inv<"getRelicDataInfo">(DB_GET_RELIC_DATA_INFO),
     getWfmItems: inv<"getWfmItems">(DB_GET_WFM_ITEMS),
     getSyndicateNames: inv<"getSyndicateNames">(DB_GET_SYNDICATE_NAMES),
+    getRivenStatNames: inv<"getRivenStatNames">(DB_GET_RIVEN_STAT_NAMES),
 
     wfmSignIn: inv<"wfmSignIn">(WFM_SIGNIN),
     wfmSignOut: inv<"wfmSignOut">(WFM_SIGNOUT),

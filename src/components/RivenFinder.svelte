@@ -8,6 +8,8 @@
   import { isActiveOrderStatus } from "../../config/shared/wfmOrders.js";
   import type { RivenBestAttributes, WfmRivenListing, RivenStatOption } from "../types/ipc.js";
   import { tr, type MessageKey } from "../lib/i18n.js";
+  import { rivenStatLabel } from "../lib/rivenLabels.js";
+  import { rivenStatNames } from "../stores/data.js";
 
   interface AttrSlot {
     positive: boolean;
@@ -308,7 +310,9 @@
                   : $tr("rivens.finder.anyNegative")}</option
               >
               {#each statOptions as opt}
-                <option value={opt.wfmUrlName}>{opt.displayName}</option>
+                <option value={opt.wfmUrlName}
+                  >{rivenStatLabel(opt.displayName, $rivenStatNames)}</option
+                >
               {/each}
             </ThemedSelect>
             <label
@@ -459,7 +463,7 @@
                 ? 'text-success'
                 : 'text-danger'}"
             >
-              {s.positive ? "+" : "−"}{s.name}
+              {s.positive ? "+" : "−"}{rivenStatLabel(s.name, $rivenStatNames)}
             </span>
           {/each}
         </div>

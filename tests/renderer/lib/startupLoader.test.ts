@@ -50,6 +50,7 @@ vi.mock("../../../src/stores/data.js", async () => {
     wfmItems: writable({}),
     parsedItems: writable([]),
     syndicateNames: writable({}),
+    rivenStatNames: writable({}),
   };
 });
 

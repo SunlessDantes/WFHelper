@@ -304,6 +304,11 @@ export interface IpcInvokeMap {
     args: [];
     return: SyndicateNames;
   };
+  /** Lowercased English riven stat label -> game-language label. */
+  getRivenStatNames: {
+    args: [];
+    return: Record<string, string>;
+  };
   wfmSignIn: {
     args: [{ email: string; password: string }];
     return: WfmSignInResponse;
