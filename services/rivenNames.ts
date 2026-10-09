@@ -1,6 +1,6 @@
-// Riven stat labels in the game language, keyed by the lowercased English label.
-// English stays the key for grading, similarity and warframe.market, so the
-// renderer swaps the text only where it shows it.
+// Riven stat and weapon labels in the game language, keyed by the lowercased
+// English label. English stays the key for grading, similarity and
+// warframe.market, so the renderer swaps the text only where it shows it.
 
 import { statTagToDisplayName } from "../config/shared/rivenStatDisplayNames";
 import { TAG_TO_WFM_URL_NAME, wfmAttributeLabel } from "../config/shared/wfmRivenVocabulary";
@@ -8,7 +8,8 @@ import { normalizeErrorMessage } from "../config/shared/errors";
 import { readPepDict, readPepExport } from "./bundledGameData";
 import { DEFAULT_GAME_LOCALE, getGameLocale, localizeName } from "./gameLocale";
 import { withScope } from "./logger";
-import { getStatDisplayName } from "./rivenData";
+import { localizedNameFields } from "./itemDatabase";
+import { getAllRivenWeaponNames, getStatDisplayName, getWeaponUniqueName } from "./rivenData";
 
 const log = withScope("rivenStatNames");
 
@@ -81,4 +82,16 @@ export function getRivenStatNames(): Record<string, string> {
     cache.set(locale, names);
   }
   return names;
+}
+
+/** Empty under English. Not cached: the item database may still be loading on
+ *  the first call, and a few hundred lookups cost nothing. */
+export function getRivenWeaponLabels(): Record<string, string> {
+  if (getGameLocale() === DEFAULT_GAME_LOCALE) return {};
+  const labels: Record<string, string> = {};
+  for (const name of getAllRivenWeaponNames()) {
+    const { displayName } = localizedNameFields(getWeaponUniqueName(name), name);
+    if (displayName) labels[name.toLowerCase()] = displayName;
+  }
+  return labels;
 }

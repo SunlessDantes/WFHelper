@@ -37,7 +37,7 @@
     RIVEN_ATTR_GRADE_KEYS,
     RIVEN_ATTR_GRADE_ORDER,
     RIVEN_TYPE_KEYS,
-    rivenStatLabel,
+    rivenNameLabel,
     rivenWeaponLabel,
   } from "../lib/rivenLabels.js";
 
@@ -113,7 +113,7 @@
       // rivenName makes the generated suffix searchable ("satidra", "croni").
       keywords: [
         riven.rivenName,
-        ...riven.stats.flatMap((stat) => [stat.name, rivenStatLabel(stat.name, $rivenStatNames)]),
+        ...riven.stats.flatMap((stat) => [stat.name, rivenNameLabel(stat.name, $rivenStatNames)]),
       ],
       disposition: riven.disposition,
       rerolls: riven.rerolls,
@@ -310,7 +310,7 @@
         <img class={iconCls} src={elementIcon(stat.name)} alt="" />
       {/if}
       <span class="overflow-hidden text-ellipsis text-text-primary font-medium min-w-0"
-        >{rivenStatLabel(stat.name, $rivenStatNames)}</span
+        >{rivenNameLabel(stat.name, $rivenStatNames)}</span
       >
     </div>
   {/each}

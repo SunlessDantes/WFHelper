@@ -5,7 +5,7 @@ import { getLogDirectory, withScope } from "../services/logger";
 import * as itemDb from "../services/itemDatabase";
 import { setGameLocale } from "../services/gameLocale";
 import { getSyndicateNames } from "../services/syndicateNames";
-import { getRivenStatNames } from "../services/rivenStatNames";
+import { getRivenStatNames, getRivenWeaponLabels } from "../services/rivenNames";
 import * as wfmCatalog from "../services/wfmCatalog";
 import * as masteryHelper from "../services/masteryHelper";
 import * as codexProfile from "../services/codexProfile";
@@ -27,6 +27,7 @@ import {
   DB_GET_WFM_ITEMS,
   DB_GET_SYNDICATE_NAMES,
   DB_GET_RIVEN_STAT_NAMES,
+  DB_GET_RIVEN_WEAPON_LABELS,
   DB_GET_MASTERY,
   DB_GET_CODEX_SCANS,
   PERSONAL_PROFILE_GET,
@@ -102,6 +103,9 @@ function register(): void {
 
   handleAuthorized(DB_GET_SYNDICATE_NAMES, assertMainRendererSender, () => getSyndicateNames());
   handleAuthorized(DB_GET_RIVEN_STAT_NAMES, assertMainRendererSender, () => getRivenStatNames());
+  handleAuthorized(DB_GET_RIVEN_WEAPON_LABELS, assertMainRendererSender, () =>
+    getRivenWeaponLabels(),
+  );
 
   handleAuthorized(DB_GET_WFM_ITEMS, assertMainRendererSender, async () => {
     if (!wfmCatalog.isLoaded()) {

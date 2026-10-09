@@ -309,6 +309,11 @@ export interface IpcInvokeMap {
     args: [];
     return: Record<string, string>;
   };
+  /** Lowercased English riven weapon name -> game-language name. */
+  getRivenWeaponLabels: {
+    args: [];
+    return: Record<string, string>;
+  };
   wfmSignIn: {
     args: [{ email: string; password: string }];
     return: WfmSignInResponse;

@@ -1,7 +1,12 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, describe, expect, it } from "vitest";
 
 import { DEFAULT_GAME_LOCALE, setGameLocale } from "../../services/gameLocale";
-import { cleanStatLabel, getRivenStatNames } from "../../services/rivenStatNames";
+import * as itemDb from "../../services/itemDatabase";
+import { cleanStatLabel, getRivenStatNames, getRivenWeaponLabels } from "../../services/rivenNames";
+
+beforeAll(() => {
+  itemDb.buildDatabase();
+});
 
 afterEach(() => {
   setGameLocale(DEFAULT_GAME_LOCALE);
@@ -29,5 +34,19 @@ describe("riven stat names", () => {
     expect(names["combo duration"]).toBe("연속기 지속 시간");
     expect(names["damage to grineer"]).toBe("그리니어에 대한 피해");
     expect(names["fire rate / attack speed"]).toBe("연사력 / 공격 속도");
+  });
+});
+
+describe("riven weapon labels", () => {
+  it("adds nothing under English", () => {
+    expect(getRivenWeaponLabels()).toEqual({});
+  });
+
+  it("names riven weapons in the game language by their English name", () => {
+    setGameLocale("ko");
+    const labels = getRivenWeaponLabels();
+
+    expect(labels["soma"]).toBe("소마");
+    expect(labels["kuva bramma"]).toBe("쿠바 브람마");
   });
 });

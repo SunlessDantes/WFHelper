@@ -16,7 +16,7 @@
   import {
     RIVEN_ATTR_GRADE_KEYS,
     RIVEN_TYPE_KEYS,
-    rivenStatLabel,
+    rivenNameLabel,
     rivenWeaponLabel,
   } from "../lib/rivenLabels.js";
   import { rivenDissolveHint } from "../lib/rivens/dissolve.js";
@@ -433,7 +433,7 @@
                 </span>
                 <span
                   class="text-base text-text-primary overflow-hidden text-ellipsis whitespace-nowrap"
-                  >{rivenStatLabel(stat.name, $rivenStatNames)}</span
+                  >{rivenNameLabel(stat.name, $rivenStatNames)}</span
                 >
               </div>
               {#if stat.grade}
@@ -485,7 +485,7 @@
                 <span
                   class="font-display text-xs py-0.5 px-1.5 rounded {matched
                     ? 'text-success bg-success-bg font-semibold'
-                    : 'text-text-muted'}">{rivenStatLabel(attr, $rivenStatNames)}</span
+                    : 'text-text-muted'}">{rivenNameLabel(attr, $rivenStatNames)}</span
                 >
               {/each}
             </div>
@@ -502,7 +502,7 @@
                 <span
                   class="font-display text-xs py-0.5 px-1.5 rounded {matched
                     ? 'text-success bg-success-bg font-semibold'
-                    : 'text-text-muted'}">{rivenStatLabel(attr, $rivenStatNames)}</span
+                    : 'text-text-muted'}">{rivenNameLabel(attr, $rivenStatNames)}</span
                 >
               {/each}
             </div>
@@ -569,7 +569,7 @@
                         : 'text-danger'} {!isMatch ? 'opacity-40 line-through' : ''}"
                     >
                       {formatRivenListingStatValue(s)}
-                      {rivenStatLabel(s.name, $rivenStatNames)}
+                      {rivenNameLabel(s.name, $rivenStatNames)}
                     </div>
                   {/each}
                 </div>

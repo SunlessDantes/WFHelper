@@ -34,8 +34,9 @@ export const RIVEN_ATTR_GRADE_ORDER: Record<string, number> = {
 // Stat and weapon names stay English for grading, similarity and warframe.market;
 // these two only pick the text a view shows.
 
-/** `names` is keyed by the lowercased English label; any miss stays English. */
-export function rivenStatLabel(
+/** A stat or weapon label from a table keyed by the lowercased English label;
+ *  any miss stays English. */
+export function rivenNameLabel(
   name: string | null | undefined,
   names: Readonly<Record<string, string>>,
 ): string {

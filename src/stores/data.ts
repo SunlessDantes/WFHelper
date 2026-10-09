@@ -15,6 +15,8 @@ export const wfmItems = writable<WfmItemsLookup>({});
 export const syndicateNames = writable<SyndicateNames>({});
 /** Lowercased English riven stat label -> game-language label; empty under English. */
 export const rivenStatNames = writable<Readonly<Record<string, string>>>({});
+/** Lowercased English riven weapon name -> game-language name; empty under English. */
+export const rivenWeaponLabels = writable<Readonly<Record<string, string>>>({});
 export const inventoryData = writable<RawInventoryData | null>(null);
 /** mtime of the file behind `inventoryData`; dates its undated point-in-time fields. */
 export const inventoryModifiedAt = writable<number | null>(null);

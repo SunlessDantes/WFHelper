@@ -1,7 +1,14 @@
 import { invoke } from "./ipc.js";
 import { onInventoryLoaded } from "./actions.js";
 import { selectionOwnership, selectionTransitions } from "./inventory/selectionAlerts.js";
-import { itemDb, parsedItems, rivenStatNames, syndicateNames, wfmItems } from "../stores/data.js";
+import {
+  itemDb,
+  parsedItems,
+  rivenStatNames,
+  rivenWeaponLabels,
+  syndicateNames,
+  wfmItems,
+} from "../stores/data.js";
 import { recordSelectionCompleteness, savedSelections } from "../stores/inventorySelection.js";
 import { relicDb } from "../stores/relics.js";
 import { applyUpdateState } from "../stores/updates.js";
@@ -43,6 +50,11 @@ function pullItemDatabase(): Promise<void> {
   );
   const pull = invoke("getItemDatabase").then((db) => {
     itemDb.set(db || {});
+    // Weapon names come out of the item database, so they wait for it.
+    void invoke("getRivenWeaponLabels").then(
+      (labels) => rivenWeaponLabels.set(labels || {}),
+      (e: unknown) => log.warn("[Startup] getRivenWeaponLabels failed:", e),
+    );
   });
   itemDbPull = pull;
   const settle = (): void => {
