@@ -91,9 +91,13 @@ export function setGameLocale(code: unknown): GameLocale | null {
  * Localized name for a `/Lotus/Language/...` key, or the English fallback.
  * A locale may be partial, so every hole resolves to English.
  */
+// Some values lead with an in-game icon tag ("<SHARD_RED_SIMPLE>") that has no
+// glyph outside the game.
+const ICON_TAG = /<[A-Z0-9_]+>\s*/g;
+
 export function localizeName(nameKey: string | null | undefined, fallback: string): string {
   if (!nameKey) return fallback;
-  return activeNames[nameKey] || fallback;
+  return activeNames[nameKey]?.replace(ICON_TAG, "").trim() || fallback;
 }
 
 /** Active game language code, for callers that pick a whole DE dictionary. */
