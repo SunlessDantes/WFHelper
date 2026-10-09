@@ -18,6 +18,7 @@ export const DB_GET_RELIC_DATABASE = "get-relic-database";
 export const DB_GET_RELIC_DATA_INFO = "get-relic-data-info";
 export const RELIC_DB_UPDATED = "relic-db-updated";
 export const DB_GET_WFM_ITEMS = "get-wfm-items";
+export const DB_GET_SYNDICATE_NAMES = "get-syndicate-names";
 export const DB_GET_MASTERY = "get-mastery-progress";
 export const PERSONAL_PROFILE_GET = "personal-profile:get";
 export const PROFILE_ACCOUNT_CHANGED = "profile-account-changed";

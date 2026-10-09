@@ -6,10 +6,13 @@ import { parseFoundry } from "../lib/inventory/foundryResources.js";
 import { gameRefKey } from "../lib/marketNaming.js";
 import { hideFoundryClaims } from "./preferences.js";
 import type { WfmItemsLookup } from "../types/ipc.js";
+import type { SyndicateNames } from "../../config/shared/syndicateTypes.js";
 import type { FoundryData, ItemDbEntry, ParsedItem, RawInventoryData } from "../types/inventory.js";
 
 export const itemDb = writable<Record<string, ItemDbEntry>>({});
 export const wfmItems = writable<WfmItemsLookup>({});
+/** Game-language syndicate and rank names; empty means the bundled English. */
+export const syndicateNames = writable<SyndicateNames>({});
 export const inventoryData = writable<RawInventoryData | null>(null);
 /** mtime of the file behind `inventoryData`; dates its undated point-in-time fields. */
 export const inventoryModifiedAt = writable<number | null>(null);

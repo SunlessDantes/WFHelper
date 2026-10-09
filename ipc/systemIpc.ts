@@ -4,6 +4,7 @@ import { unwrapInventoryPayload } from "../config/shared/inventoryPayload";
 import { getLogDirectory, withScope } from "../services/logger";
 import * as itemDb from "../services/itemDatabase";
 import { setGameLocale } from "../services/gameLocale";
+import { getSyndicateNames } from "../services/syndicateNames";
 import * as wfmCatalog from "../services/wfmCatalog";
 import * as masteryHelper from "../services/masteryHelper";
 import * as codexProfile from "../services/codexProfile";
@@ -23,6 +24,7 @@ import {
   GAME_LOCALE_UPDATED,
   ITEM_DB_UPDATED,
   DB_GET_WFM_ITEMS,
+  DB_GET_SYNDICATE_NAMES,
   DB_GET_MASTERY,
   DB_GET_CODEX_SCANS,
   PERSONAL_PROFILE_GET,
@@ -95,6 +97,8 @@ function register(): void {
       log.error("[RewardScanner] Failed to load relic items:", normalizeErrorMessage(err));
     }
   });
+
+  handleAuthorized(DB_GET_SYNDICATE_NAMES, assertMainRendererSender, () => getSyndicateNames());
 
   handleAuthorized(DB_GET_WFM_ITEMS, assertMainRendererSender, async () => {
     if (!wfmCatalog.isLoaded()) {

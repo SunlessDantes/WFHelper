@@ -1,7 +1,7 @@
 import { invoke } from "./ipc.js";
 import { onInventoryLoaded } from "./actions.js";
 import { selectionOwnership, selectionTransitions } from "./inventory/selectionAlerts.js";
-import { itemDb, parsedItems, wfmItems } from "../stores/data.js";
+import { itemDb, parsedItems, syndicateNames, wfmItems } from "../stores/data.js";
 import { recordSelectionCompleteness, savedSelections } from "../stores/inventorySelection.js";
 import { relicDb } from "../stores/relics.js";
 import { applyUpdateState } from "../stores/updates.js";
@@ -31,6 +31,12 @@ let itemDbPull: Promise<void> | null = null;
 let lastSavedHotset: string | null = null;
 
 function pullItemDatabase(): Promise<void> {
+  // Rides along because a game-language change re-pulls through here too. A
+  // failure keeps the bundled English names, so it never fails the pull.
+  void invoke("getSyndicateNames").then(
+    (names) => syndicateNames.set(names || {}),
+    (e: unknown) => log.warn("[Startup] getSyndicateNames failed:", e),
+  );
   const pull = invoke("getItemDatabase").then((db) => {
     itemDb.set(db || {});
   });

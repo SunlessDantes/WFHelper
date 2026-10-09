@@ -20,6 +20,7 @@ import type {
 } from "./market.js";
 import type { DropRow, DropSearchMode, DropSearchResult } from "../../config/shared/dropTypes.js";
 import type { SpawnNode } from "../../config/shared/spawnNodeTypes.js";
+import type { SyndicateNames } from "../../config/shared/syndicateTypes.js";
 import type {
   WorkbenchExecuteResult,
   WorkbenchOverrideAck,
@@ -298,6 +299,10 @@ export interface IpcInvokeMap {
   getWfmItems: {
     args: [];
     return: WfmItemsLookup;
+  };
+  getSyndicateNames: {
+    args: [];
+    return: SyndicateNames;
   };
   wfmSignIn: {
     args: [{ email: string; password: string }];
