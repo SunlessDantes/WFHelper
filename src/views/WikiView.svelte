@@ -183,9 +183,25 @@
       rows = result.rows;
       total = result.total;
       searched = true;
+      const english = englishQuery(q, mode, result.rows);
+      if (english !== q) {
+        linkQuery = english;
+        void resolveSpawn(english, mode, token);
+      }
     } finally {
       if (token === requestToken) loading = false;
     }
+  }
+
+  // A query typed in the game language matched only the top row's label; the wiki
+  // link and the enemy lookup need the English text behind it.
+  function englishQuery(q: string, searchMode: DropSearchMode, found: DropRow[]): string {
+    const top = found[0];
+    if (!top) return q;
+    const english = searchMode === "item" ? top.item : top.place;
+    const label = searchMode === "item" ? top.itemLabel : top.placeLabel;
+    if (!label || english.toLowerCase().includes(q.toLowerCase())) return q;
+    return searchMode === "item" ? stripQuantityPrefix(english) : english;
   }
 
   function onInput(): void {
@@ -430,10 +446,10 @@
                     <button
                       type="button"
                       class="cursor-pointer border-0 bg-transparent p-0 text-left text-text-primary hover:text-accent hover:underline"
-                      on:click={() => openItem(row.item)}>{row.item}</button
+                      on:click={() => openItem(row.item)}>{row.itemLabel ?? row.item}</button
                     >
                   {:else}
-                    <span class="text-text-primary">{row.item}</span>
+                    <span class="text-text-primary">{row.itemLabel ?? row.item}</span>
                   {/if}
                 </td>
                 <td class="px-3 py-1.5 text-text-secondary">
@@ -448,17 +464,18 @@
                       type="button"
                       class="cursor-pointer border-0 bg-transparent p-0 text-left text-text-secondary hover:text-accent hover:underline"
                       data-enemy-link={row.place}
-                      on:click={() => openEnemy(row.place)}>{row.place}</button
+                      on:click={() => openEnemy(row.place)}>{row.placeLabel ?? row.place}</button
                     >
                   {:else if placeRelic}
                     <button
                       type="button"
                       class="cursor-pointer border-0 bg-transparent p-0 text-left text-text-secondary hover:text-accent hover:underline"
                       data-relic-link={row.place}
-                      on:click={() => activeRelic.set(placeRelic)}>{row.place}</button
+                      on:click={() => activeRelic.set(placeRelic)}
+                      >{row.placeLabel ?? row.place}</button
                     >
                   {:else}
-                    <span>{row.place}</span>
+                    <span>{row.placeLabel ?? row.place}</span>
                   {/if}
                   {#if liveBounty}
                     <span class="text-accent"> &middot; {liveBounty}</span>
