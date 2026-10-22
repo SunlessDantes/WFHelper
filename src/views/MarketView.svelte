@@ -365,7 +365,7 @@
     return {
       ...contract,
       name: contract.itemName,
-      displayName: contractTitleLabel(contract, $rivenWeaponLabels),
+      displayName: contractTitleLabel(contract, $rivenWeaponLabels, $tr("rivens.type.riven")),
       amount: contract.quantity,
       internalName: contract.itemUrlName || contract.weaponUrlName || "",
       keywords: [
