@@ -85,57 +85,6 @@ interface QueueTask<T> {
   reject: (reason?: unknown) => void;
 }
 
-/** Spaces call starts at least `intervalMs` apart. Each caller books its slot
- *  before sleeping, so concurrent callers queue up instead of waking together. */
-export function createMinIntervalGate(intervalMs: number) {
-  let nextSlotAt = 0;
-  return async function waitForSlot(): Promise<void> {
-    const now = Date.now();
-    const slot = Math.max(now, nextSlotAt);
-    nextSlotAt = slot + intervalMs;
-    if (slot > now) await new Promise((resolve) => setTimeout(resolve, slot - now));
-  };
-}
-
-export function createAdaptiveDelayController(options: {
-  baseDelayMs: number;
-  maxDelayMs: number;
-  decayStepMs: number;
-  backoffStepMs: number;
-  minRateLimitCooldownMs: number;
-}) {
-  let lastRequestAt = 0;
-  let delayMs = options.baseDelayMs;
-
-  return {
-    async waitForTurn(): Promise<void> {
-      const now = Date.now();
-      const elapsed = now - lastRequestAt;
-      if (elapsed < delayMs) {
-        await new Promise((resolve) => setTimeout(resolve, delayMs - elapsed));
-      }
-      lastRequestAt = Date.now();
-    },
-    noteRateLimited(retryAfterSeconds: number): void {
-      delayMs = Math.min(options.maxDelayMs, delayMs + options.backoffStepMs);
-      lastRequestAt =
-        Date.now() + Math.max(retryAfterSeconds * 1000, options.minRateLimitCooldownMs) - delayMs;
-    },
-    noteSuccess(): void {
-      if (delayMs > options.baseDelayMs) {
-        delayMs = Math.max(options.baseDelayMs, delayMs - options.decayStepMs);
-      }
-    },
-    getDelayMs(): number {
-      return delayMs;
-    },
-    reset(): void {
-      lastRequestAt = 0;
-      delayMs = options.baseDelayMs;
-    },
-  };
-}
-
 export function createPriorityRequestQueue<P extends string>(options: {
   priorities: readonly P[];
   maxDepth: number;

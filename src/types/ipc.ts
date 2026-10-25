@@ -18,6 +18,7 @@ import type {
   WfmUpdateOrderInput,
   WfmUserProfile,
 } from "./market.js";
+import type { WfmPublicGetRequest, WfmPublicGetResponse } from "../../config/shared/wfm.js";
 import type { DropRow, DropSearchMode, DropSearchResult } from "../../config/shared/dropTypes.js";
 import type { SpawnNode } from "../../config/shared/spawnNodeTypes.js";
 import type {
@@ -346,6 +347,10 @@ export interface IpcInvokeMap {
   wfmLookupItemBySlug: {
     args: [slug: string];
     return: WfmLookupItemResponse;
+  };
+  wfmPublicGet: {
+    args: [request: WfmPublicGetRequest];
+    return: WfmPublicGetResponse;
   };
   marketStatsHistoryMerge: {
     args: [slug: string, points: MarketStatPoint[], mode?: MarketStatsMergeMode];
