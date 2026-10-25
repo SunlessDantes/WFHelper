@@ -1,6 +1,9 @@
 import crypto from "node:crypto";
+import { app } from "electron";
 import WebSocket, { type RawData } from "ws";
 import { getWfmClearanceHeaders } from "./wfmClient";
+
+import { APP_HOMEPAGE_URL, APP_PRODUCT_NAME } from "../config/shared/appMeta";
 
 const WFM_WS_URL = "wss://ws.warframe.market/socket";
 const WFM_WS_PROTOCOL = "wfm";
@@ -13,13 +16,21 @@ function generateWfmWsId(): string {
   return Array.from(crypto.randomBytes(11), (b) => chars[b % chars.length]).join("");
 }
 
+// WFM refuses handshakes without a User-Agent, and its client rules ask for a
+// named one rather than a browser string.
+function wfmWsUserAgent(): string {
+  return `${APP_PRODUCT_NAME}/${app.getVersion()} (+${APP_HOMEPAGE_URL})`;
+}
+
 export function createWfmWebSocket(
   options: { handshakeTimeout?: number; headers?: Record<string, string> } = {},
 ): WebSocket {
   return new WebSocket(WFM_WS_URL, WFM_WS_PROTOCOL, {
     origin: WFM_WS_ORIGIN,
+    // A clearance cookie only holds with the UA it was solved under, so that UA
+    // wins when there is one.
+    headers: { "User-Agent": wfmWsUserAgent(), ...getWfmClearanceHeaders(), ...options.headers },
     handshakeTimeout: options.handshakeTimeout,
-    headers: { ...getWfmClearanceHeaders(), ...options.headers },
     maxPayload: WFM_WS_MAX_PAYLOAD_BYTES,
     perMessageDeflate: false,
   });
