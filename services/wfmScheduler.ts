@@ -19,8 +19,9 @@ export interface WfmSchedulerHealth {
 export const WFM_SCHEDULER_DEFAULTS = {
   /** Sustained global budget across every main-process WFM call. */
   RATE_PER_SECOND: 2.5,
-  /** Tokens a cold burst may spend before the sustained rate binds. */
-  BURST_TOKENS: 5,
+  /** Tokens a cold burst may spend before the sustained rate binds. WFM's
+   *  published limit is 3/s, so a burst above that is a violation, not slack. */
+  BURST_TOKENS: 3,
   MAX_CONCURRENT: 3,
   /** Background never takes the last slot, so an interactive call waits for
    *  the budget and never for a sweep. */

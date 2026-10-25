@@ -11,6 +11,7 @@ import {
 } from "../../../config/shared/numeric.js";
 import { formatWfmAssetUrl, normalizeWfmSlug, WFM_HEADERS } from "../../../config/shared/wfm.js";
 import { isWfmExcludedSlug } from "../../../config/shared/wfmExclusions.js";
+import { waitForDirectWfmSlot } from "./directRequestGate.js";
 import { createSingleFlightMap } from "./requestPolicy.js";
 import { fetchWithTimeout } from "../../../config/shared/fetchWithTimeout.js";
 
@@ -78,6 +79,7 @@ type DirectMetaResult =
   | { status: "transient" };
 
 async function fetchDirectMetaBySlug(slug: string): Promise<DirectMetaResult> {
+  await waitForDirectWfmSlot();
   const response = await fetchWithTimeout(
     `https://api.warframe.market/v2/items/${slug}`,
     DIRECT_META_FETCH_TIMEOUT_MS,

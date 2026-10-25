@@ -1,6 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { createPriorityRequestQueue } from "../../../../src/lib/wfm/requestPolicy.js";
+import {
+  createMinIntervalGate,
+  createPriorityRequestQueue,
+} from "../../../../src/lib/wfm/requestPolicy.js";
 
 describe("createPriorityRequestQueue", () => {
   it("keeps the default runner serial and promotes without duplicating or demoting work", async () => {
@@ -50,5 +53,22 @@ describe("createPriorityRequestQueue", () => {
     await expect(second).resolves.toBe("next");
     expect(skipped).not.toHaveBeenCalled();
     expect(queue.isRunning()).toBe(false);
+  });
+});
+
+describe("createMinIntervalGate", () => {
+  it("spaces concurrent callers instead of releasing them together", async () => {
+    vi.useFakeTimers();
+    try {
+      const waitForSlot = createMinIntervalGate(400);
+      const started: number[] = [];
+      const t0 = Date.now();
+      const calls = [0, 1, 2].map(() => waitForSlot().then(() => started.push(Date.now() - t0)));
+      await vi.advanceTimersByTimeAsync(1_000);
+      await Promise.all(calls);
+      expect(started).toEqual([0, 400, 800]);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

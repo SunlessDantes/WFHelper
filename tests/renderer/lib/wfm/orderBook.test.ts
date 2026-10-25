@@ -1,5 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+// These tests time the queue itself; the shared rate gate is covered on its own.
+vi.mock("../../../../src/lib/wfm/directRequestGate.js", () => ({
+  waitForDirectWfmSlot: async () => {},
+}));
+
 import {
   clearOrderBookCache,
   fetchItemOrderBookBySlug,

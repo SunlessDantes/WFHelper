@@ -85,6 +85,18 @@ interface QueueTask<T> {
   reject: (reason?: unknown) => void;
 }
 
+/** Spaces call starts at least `intervalMs` apart. Each caller books its slot
+ *  before sleeping, so concurrent callers queue up instead of waking together. */
+export function createMinIntervalGate(intervalMs: number) {
+  let nextSlotAt = 0;
+  return async function waitForSlot(): Promise<void> {
+    const now = Date.now();
+    const slot = Math.max(now, nextSlotAt);
+    nextSlotAt = slot + intervalMs;
+    if (slot > now) await new Promise((resolve) => setTimeout(resolve, slot - now));
+  };
+}
+
 export function createAdaptiveDelayController(options: {
   baseDelayMs: number;
   maxDelayMs: number;

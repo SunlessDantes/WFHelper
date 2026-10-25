@@ -8,6 +8,7 @@ import {
   type WfmRequestPriority,
 } from "./wfmScheduler";
 import { WfmApiError } from "./wfmTypes";
+import { isAuctionSearchPath, waitForAuctionSearchSlot } from "./wfmAuctionSearchBudget";
 import { normalizeErrorMessage } from "../config/shared/errors";
 
 const log = withScope("wfmClient");
@@ -803,12 +804,24 @@ function _coreRequest(
   );
 }
 
+// Auction search waits for its own budget before taking a scheduler slot, so a
+// queued search never holds a slot other requests could use.
+async function _budgetedCoreRequest(
+  baseUrl: string,
+  method: string,
+  path: string,
+  opts: CoreRequestOptions,
+): Promise<unknown> {
+  if (isAuctionSearchPath(path)) await waitForAuctionSearchSlot(opts.priority);
+  return _coreRequest(baseUrl, method, path, opts);
+}
+
 export function request(
   method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH",
   path: string,
   opts: WfmRequestOptions = {},
 ): Promise<unknown> {
-  return _coreRequest(BASE_URL, method, path, { ...opts, label: "WFMClient" });
+  return _budgetedCoreRequest(BASE_URL, method, path, { ...opts, label: "WFMClient" });
 }
 
 /** Where WFM redirects `path`, or null when it serves the path directly. A
@@ -865,7 +878,7 @@ export function requestV2(
   path: string,
   opts: WfmRequestOptions = {},
 ): Promise<unknown> {
-  return _coreRequest(BASE_URL_V2, method, path, {
+  return _budgetedCoreRequest(BASE_URL_V2, method, path, {
     ...opts,
     baseHeaders: { Crossplay: "true" },
     label: "WFMClient v2",

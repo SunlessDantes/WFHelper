@@ -9,6 +9,7 @@ import {
   type WfmOrderBookEntry,
 } from "../../../config/shared/wfmOrders.js";
 import { withAbortTimeout } from "../../../config/shared/fetchWithTimeout.js";
+import { waitForDirectWfmSlot } from "./directRequestGate.js";
 import { createPriorityRequestQueue } from "./requestPolicy.js";
 import { log } from "../log.js";
 
@@ -79,6 +80,7 @@ function isFresh(entry: CacheEntry): boolean {
 async function fetchRawOrdersFromEndpoint(
   url: string,
 ): Promise<{ data: unknown[] | null; transient: boolean }> {
+  await waitForDirectWfmSlot();
   bumpCounter("httpCalls");
 
   try {
