@@ -1,5 +1,6 @@
 import de from "../src/i18n/de.json";
 import en from "../src/i18n/en.json";
+import ko from "../src/i18n/ko.json";
 import zh from "../src/i18n/zh.json";
 
 type MessageKey = keyof typeof en;
@@ -119,7 +120,7 @@ const OVERLAY_MESSAGE_KEYS = [
 
 // Same fallback chain as the renderer: a locale may be partial and every hole
 // is served by English.
-const DICTIONARIES: Record<string, Dictionary> = { en, de, zh };
+const DICTIONARIES: Record<string, Dictionary> = { en, de, zh, ko };
 
 const DEFAULT_LOCALE = "en";
 let activeLocale = DEFAULT_LOCALE;
@@ -135,9 +136,17 @@ export function setOverlayLocale(code: unknown): string | null {
 /** A string main renders itself (the tray menu), not an overlay key. These are
  *  outside OVERLAY_MESSAGE_KEYS because no overlay window asks for them, and the
  *  fallback keeps the menu readable if a catalogue ever loses the key. */
-export function mainMessage(key: MessageKey, fallback: string): string {
+export function mainMessage(
+  key: MessageKey,
+  fallback: string,
+  params?: Record<string, string | number>,
+): string {
   const dictionary = DICTIONARIES[activeLocale] ?? DICTIONARIES[DEFAULT_LOCALE];
-  return dictionary[key] ?? DICTIONARIES[DEFAULT_LOCALE][key] ?? fallback;
+  const template = dictionary[key] ?? DICTIONARIES[DEFAULT_LOCALE][key] ?? fallback;
+  if (!params) return template;
+  return template.replace(/\{(\w+)\}/g, (match, name: string) =>
+    name in params ? String(params[name]) : match,
+  );
 }
 
 interface OverlayMessageBundle {
