@@ -114,6 +114,7 @@ import * as tradeNotificationIpc from "./ipc/tradeNotificationIpc";
 import * as notificationLogIpc from "./ipc/notificationLogIpc";
 import * as notificationChannelsIpc from "./ipc/notificationChannelsIpc";
 import * as marketAlertsIpc from "./ipc/marketAlertsIpc";
+import { registerTradePriceCheck } from "./services/tradePriceCheck";
 import * as missionRewardsIpc from "./ipc/missionRewardsIpc";
 import * as inventorySelectionIpc from "./ipc/inventorySelectionIpc";
 import * as tradeWorkflow from "./ipc/tradeWorkflow";
@@ -541,6 +542,7 @@ function registerIpcHandlers(profileStage: ProfileStage): void {
   notificationChannelsIpc.register();
   marketAlertsIpc.register();
   tradeWorkbenchIpc.register();
+  registerTradePriceCheck();
   tradeLedgerIpc.register();
   popoutIpc.register();
   inventorySelectionIpc.register();

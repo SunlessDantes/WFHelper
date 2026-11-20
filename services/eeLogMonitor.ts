@@ -33,6 +33,7 @@ import {
   shutdownPtTracker,
   setPtCallbacks,
 } from "./profitTakerTracker";
+import { announceTradeDialog, settleTradeDialog } from "./tradeDialogWatch";
 import type { ArbiRunRecord } from "../config/shared/arbiTypes";
 import type { PtRunRecord } from "../config/shared/profitTakerTypes";
 import { normalizeErrorMessage } from "../config/shared/errors";
@@ -495,6 +496,7 @@ function handleLine(line: string, source: "dbwin" | "file" = "file"): void {
         ? _tradeDialogBuffer
         : _tradeDialogBuffer.slice(0, _tradeDialogGlueMark);
     const parsed = _parseTradeDialog(dialogLines);
+    settleTradeDialog();
     _tradeDialogBuffer = null;
     _tradeDialogSealed = false;
     _tradeDialogGlueMark = null;
@@ -504,6 +506,15 @@ function handleLine(line: string, source: "dbwin" | "file" = "file"): void {
       );
       tradeConfirmedCallback(parsed);
     }
+  }
+
+  // The whole dialog is in once it seals, before the player accepts.
+  if (_tradeDialogBuffer !== null && _tradeDialogSealed) {
+    const mark = _tradeDialogGlueMark;
+    const buffer = _tradeDialogBuffer;
+    announceTradeDialog(buffer, () =>
+      _parseTradeDialog(mark === null ? buffer : buffer.slice(0, mark)),
+    );
   }
 
   // Delegate to the riven state machine - returns whether SendResult was consumed.

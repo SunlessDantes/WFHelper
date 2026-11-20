@@ -1189,6 +1189,7 @@
   "overlay.trade.closingFailed": "关闭失败",
   "overlay.trade.listingClosed": "挂单已关闭",
   "overlay.trade.noListingMatched": "没有匹配的挂单",
+  "overlay.trade.priceLow": "⚠ 低于挂单价 ({listed}p)",
   "overlay.trade.repAlready": "已为 {partner} 点过好评",
   "overlay.trade.repFailed": "发送好评失败",
   "overlay.trade.repNotFound": "在 warframe.market 上找不到 {partner}",
