@@ -22,6 +22,7 @@ import { isNativeWayland } from "../services/linuxDisplayBackend";
 import { probeLayerShell } from "../services/layerShell";
 import { tradeNotificationBody, tradeNotificationTitle } from "../config/shared/notifications";
 import { durationMsFromSeconds } from "../config/shared/numeric";
+import { priceWarningPlacement } from "../config/shared/tradePrice";
 import { resolveRepOffer } from "../config/shared/tradeMatch";
 import type {
   TradeMatchPayload,
@@ -54,24 +55,32 @@ interface Rect {
   height: number;
 }
 
+// The status of the toast on screen; the price warning has its own spot.
+let _placementStatus: TradeNotificationStatus | null = null;
+
 /** Top-right of the primary work area unless a position was saved; a saved one
  *  stays whole inside its own display, or the primary one when that is gone. */
-export function getTradeNotificationPlacementRect(): Rect {
+export function getTradeNotificationPlacementRect(
+  status: TradeNotificationStatus | null = _placementStatus,
+): Rect {
   const size = { width: WIN_W, height: WIN_H };
   const saved = ctx.overlaySettings.overlayWindowBounds?.tradeNotification;
   const primary = screen.getPrimaryDisplay();
-  if (!saved || !Number.isFinite(saved.x) || !Number.isFinite(saved.y)) {
+  const hasSaved = !!saved && Number.isFinite(saved.x) && Number.isFinite(saved.y);
+  const displays = screen.getAllDisplays();
+  const display = hasSaved
+    ? findDisplayById(displays, saved.displayId) ||
+      displays.find(
+        ({ workArea: a }) =>
+          saved.x >= a.x && saved.x < a.x + a.width && saved.y >= a.y && saved.y < a.y + a.height,
+      ) ||
+      primary
+    : primary;
+  if (status === "price-low") return { ...priceWarningPlacement(display.workArea, size), ...size };
+  if (!hasSaved) {
     const area = primary.workArea;
     return { x: area.x + area.width - WIN_W - MARGIN, y: area.y + MARGIN, ...size };
   }
-  const displays = screen.getAllDisplays();
-  const display =
-    findDisplayById(displays, saved.displayId) ||
-    displays.find(
-      ({ workArea: a }) =>
-        saved.x >= a.x && saved.x < a.x + a.width && saved.y >= a.y && saved.y < a.y + a.height,
-    ) ||
-    primary;
   return { ...clampIntoArea(saved.x, saved.y, WIN_W, WIN_H, display.workArea), ...size };
 }
 
@@ -321,6 +330,7 @@ function _displayNotification(
     },
   };
   win.webContents.send(TRADE_NOTIFICATION_SHOW, payload);
+  _placementStatus = pending.status;
   _presentWindow(win);
   _recordTradeHistory(pending);
 

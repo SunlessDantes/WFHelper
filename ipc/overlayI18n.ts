@@ -97,6 +97,7 @@ const OVERLAY_MESSAGE_KEYS = [
   "overlay.trade.closingFailed",
   "overlay.trade.listingClosed",
   "overlay.trade.noListingMatched",
+  "overlay.trade.priceLow",
   "overlay.trade.repAlready",
   "overlay.trade.repFailed",
   "overlay.trade.repNotFound",

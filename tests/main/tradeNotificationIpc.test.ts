@@ -415,6 +415,24 @@ describe("toast position", () => {
     expect(notifications.getTradeNotificationPlacementRect()).toEqual({ x: 400, y: 200, ...TOAST });
   });
 
+  it("centres the price warning a fifth of the way down, then returns to the corner", async () => {
+    const { notifications } = await setup({ tradeRepHotkeyEnabled: false });
+
+    notifications.showTradeNotification(sale("Buyer"), "price-low");
+    const win = h.windows[0];
+    win.finishLoad();
+    const centred: [number, number] = [Math.round((1920 - TOAST.width) / 2), 208];
+    expect(win.moves).toEqual([centred]);
+    expect(notifications.getTradeNotificationPlacementRect()).toEqual({
+      x: centred[0],
+      y: centred[1],
+      ...TOAST,
+    });
+
+    notifications.showTradeNotification(sale("Other"), "closed");
+    expect(win.moves).toEqual([centred, [1920 - TOAST.width - 16, 16]]);
+  });
+
   // The window is kept for the session, so a position saved while it exists has
   // to reach it by a move, never by building a second one.
   it("moves the existing window to a position saved after it was built", async () => {
