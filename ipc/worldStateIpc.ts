@@ -9,6 +9,7 @@ import type { NotificationKind } from "../config/shared/notifications";
 import { withScope } from "../services/logger";
 import { dispatch } from "../services/notificationChannels";
 import * as worldStateParser from "../services/worldStateParser";
+import { withWorldLabels } from "../services/worldLabels";
 import { normalizeErrorMessage } from "../config/shared/errors";
 import { durationMsFromSeconds } from "../config/shared/numeric";
 import { missionTypeMatches } from "../config/shared/missionTypes";
@@ -756,11 +757,11 @@ function register(
     const now = Date.now();
     if (_worldStateCache && now - _worldStateCacheTime < WORLD_STATE_TTL_MS) {
       checkPreCycleNotifications(_worldStateCache);
-      return _worldStateCache;
+      return withWorldLabels(_worldStateCache);
     }
 
     try {
-      return await refreshWorldState();
+      return withWorldLabels(await refreshWorldState());
     } catch (err) {
       const msg = normalizeErrorMessage(err);
       log.error("[WorldState] fetch failed:", msg);
@@ -768,7 +769,7 @@ function register(
       if (!_worldStateCache) {
         _worldStateCache = worldStateParser.emptyWorldState();
       }
-      return _worldStateCache;
+      return withWorldLabels(_worldStateCache);
     }
   });
   _registered = true;

@@ -57,7 +57,15 @@
   import { onDestroy, onMount } from "svelte";
   import { SvelteMap, SvelteSet } from "svelte/reactivity";
 
-  import { itemDb, parsedItems, wfmItems } from "../stores/data.js";
+  import {
+    itemDb,
+    parsedItems,
+    rivenStatNames,
+    rivenWeaponLabels,
+    wfmItems,
+  } from "../stores/data.js";
+  import { rivenNameLabel } from "../lib/rivenLabels.js";
+  import { marketItemLabel } from "../lib/itemLabel.js";
   import {
     applyClosedOrderQuantity,
     busyOrderIds,
@@ -83,7 +91,11 @@
   import MarketContractRow from "../components/market/MarketContractRow.svelte";
   import MarketOrderRow from "../components/market/MarketOrderRow.svelte";
   import WfmPresenceBar from "../components/market/WfmPresenceBar.svelte";
-  import { attributeKeyword, contractInventoryMatch } from "../lib/marketContract.js";
+  import {
+    attributeKeyword,
+    contractInventoryMatch,
+    contractTitleLabel,
+  } from "../lib/marketContract.js";
   import { contractIdsToGrade, mergeContractGrades } from "../lib/rivenContractGrades.js";
   import { isIpcError as hasError } from "../lib/ipcGuards.js";
   import InventoryOrderBookPanel from "../components/inventory/InventoryOrderBookPanel.svelte";
@@ -188,6 +200,7 @@
     wfmItems: WfmItemsLookup,
   ): WfmOrder & {
     name: string;
+    displayName: string;
     amount: number;
     count: number;
     internalName: string;
@@ -196,6 +209,7 @@
     return {
       ...order,
       name: order.itemName,
+      displayName: marketItemLabel(order.itemName, wfmItems, $itemDb),
       amount: order.quantity,
       count: ownedCountForMarketOrder(order, parsedItems, wfmItems),
       internalName: order.itemUrlName || "",
@@ -336,17 +350,22 @@
 
   function normalizeContractForFilter(contract: WfmContract): WfmContract & {
     name: string;
+    displayName: string;
     amount: number;
     internalName: string;
     keywords: string[];
   } {
     const statKeywords = Array.isArray(contract.stats)
-      ? contract.stats.map(attributeKeyword).filter(Boolean)
+      ? contract.stats
+          .map(attributeKeyword)
+          .filter(Boolean)
+          .flatMap((keyword) => [keyword, rivenNameLabel(keyword, $rivenStatNames)])
       : [];
 
     return {
       ...contract,
       name: contract.itemName,
+      displayName: contractTitleLabel(contract, $rivenWeaponLabels, $tr("rivens.type.riven")),
       amount: contract.quantity,
       internalName: contract.itemUrlName || contract.weaponUrlName || "",
       keywords: [
@@ -723,11 +742,11 @@
         tradeSize > 1
           ? $tr(bought ? "market.confirmOrderBoughtTrade" : "market.confirmOrderSoldTrade", {
               count: tradeSize,
-              item: order.itemName,
+              item: marketItemLabel(order.itemName, $wfmItems, $itemDb),
               price: order.platinum,
             })
           : $tr(bought ? "market.confirmOrderBought" : "market.confirmOrderSold", {
-              item: order.itemName,
+              item: marketItemLabel(order.itemName, $wfmItems, $itemDb),
               price: order.platinum,
             });
       if (!(await confirmWithDialog(message, $tr))) return;

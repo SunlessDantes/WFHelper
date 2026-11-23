@@ -7,11 +7,13 @@
   } from "../../../config/shared/wfmOrders.js";
   import { fetchItemOrderBookBySlug } from "../../lib/wfm/orderBook.js";
   import { PLATINUM_ICON_URL } from "../../lib/assetUrls.js";
+  import { itemDb, wfmItems } from "../../stores/data.js";
   import MarketOrderSummary from "./MarketOrderSummary.svelte";
   import MarketRowBase from "./MarketRowBase.svelte";
   import OrderStepper from "./OrderStepper.svelte";
   import { isRankedGroup } from "../../../config/shared/numeric.js";
   import { tr } from "../../lib/i18n.js";
+  import { marketItemLabel } from "../../lib/itemLabel.js";
   import type { InventoryViewItem } from "../../lib/inventoryMarket.js";
   import { listingWarning, type ListingInventoryMatch } from "../../lib/marketListing.js";
   import type { OrderModalHint, WfmOrder } from "../../types/market.js";
@@ -42,6 +44,7 @@
 
   $: modVariant = WFM_MOD_VARIANTS.some((variant) => variant === order.subtype);
   $: void loadVariantPrices(order.itemUrlName, order.modRank, modVariant ? order.subtype : null);
+  $: title = marketItemLabel(order.itemName, $wfmItems, $itemDb);
 
   async function loadVariantPrices(
     slug: string | null,
@@ -181,7 +184,7 @@
 {#if compact}
   <MarketRowBase
     compact
-    title={order.itemName}
+    {title}
     thumb={order.itemThumb}
     badgeLabel={orderKind}
     badgeClass={orderKindClass}
@@ -298,7 +301,7 @@
   </MarketRowBase>
 {:else}
   <MarketRowBase
-    title={order.itemName}
+    {title}
     thumb={order.itemThumb}
     fullClass="grid grid-cols-[auto_minmax(0,1fr)_auto] items-stretch gap-2 px-2.5 py-2.5"
     fullMainClass="grid min-w-0 grid-cols-[44px_minmax(0,1fr)] gap-x-2 gap-y-1"
