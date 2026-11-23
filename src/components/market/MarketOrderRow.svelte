@@ -42,6 +42,10 @@
   let variantPrices: { wts: number | null; wtb: number | null } | null = null;
   let variantRequest = 0;
 
+  // The icon mirror lags warframe.market (thumbs it holds as PNG are now WebP
+  // there), so a missing thumb falls back to the item database art.
+  $: fallbackThumb =
+    $itemDb[$wfmItems[order.itemName.toLowerCase()]?.gameRef ?? ""]?.imageUrl ?? null;
   $: modVariant = WFM_MOD_VARIANTS.some((variant) => variant === order.subtype);
   $: void loadVariantPrices(order.itemUrlName, order.modRank, modVariant ? order.subtype : null);
   $: title = marketItemLabel(order.itemName, $wfmItems, $itemDb);
@@ -186,6 +190,7 @@
     compact
     {title}
     thumb={order.itemThumb}
+    {fallbackThumb}
     badgeLabel={orderKind}
     badgeClass={orderKindClass}
     onOpen={() => onOpen(order)}
@@ -303,6 +308,7 @@
   <MarketRowBase
     {title}
     thumb={order.itemThumb}
+    {fallbackThumb}
     fullClass="grid grid-cols-[auto_minmax(0,1fr)_auto] items-stretch gap-2 px-2.5 py-2.5"
     fullMainClass="grid min-w-0 grid-cols-[44px_minmax(0,1fr)] gap-x-2 gap-y-1"
     fullContentClass="contents"

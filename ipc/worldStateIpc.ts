@@ -222,7 +222,8 @@ const SHOW_TOAST_SCRIPT = [
   TOAST_MANAGER_TYPE_LOAD,
   "[Windows.Data.Xml.Dom.XmlDocument, Windows.Data.Xml.Dom.XmlDocument, ContentType = WindowsRuntime] > $null",
   "$x = New-Object Windows.Data.Xml.Dom.XmlDocument",
-  "$x.LoadXml((Get-Content -LiteralPath $XmlPath -Raw))",
+  // Windows PowerShell reads a BOM-less file in the ANSI code page, not UTF-8.
+  "$x.LoadXml((Get-Content -LiteralPath $XmlPath -Raw -Encoding UTF8))",
   "$t = [Windows.UI.Notifications.ToastNotification]::new($x)",
   "$t.Tag = $Tag",
   "$t.Group = $Group",
